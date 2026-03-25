@@ -1,41 +1,40 @@
-# Telegram Task Management Bot
+# Telegram Task Bot
 
-Voice-to-task bot with reminders. Send a voice message in Uzbek, English, or Russian — the bot transcribes it, creates a task, and reminds you later.
+Personal task management bot. Send voice or text messages — the bot creates tasks and reminds you.
+
+## Features
+
+- 🎤 Voice messages — auto-transcribed with OpenAI Whisper (Uzbek, English, Russian)
+- 📝 Text messages — create tasks instantly
+- ⏰ Smart reminders — choose when to be reminded
+- 🔁 Snooze — postpone reminders (30min, 1hr, 2hrs)
+- 🌍 3 languages — English, O'zbekcha, Русский
+- 💾 Persistent — reminders survive bot restarts
 
 ## Setup
 
-### 1. Create a Telegram bot
+### 1. Get API keys
 
-Talk to [@BotFather](https://t.me/BotFather) on Telegram and create a new bot. Copy the token.
+- **Telegram Bot Token** — create a bot with [@BotFather](https://t.me/BotFather)
+- **OpenAI API Key** — get one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
-### 2. Install dependencies
+### 2. Install
 
 ```bash
 pip install -r requirements.txt
 ```
 
-**System requirement:** [ffmpeg](https://ffmpeg.org/) must be installed.
-
-```bash
-# macOS
-brew install ffmpeg
-
-# Ubuntu/Debian
-sudo apt install ffmpeg
-```
-
-### 3. Configure environment
+### 3. Configure
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and set:
-- `BOT_TOKEN` — your Telegram bot token from BotFather
-- `ENCRYPTION_KEY` — generate one:
+Edit `.env` and add your keys:
 
-```bash
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+BOT_TOKEN=your_telegram_bot_token
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 4. Run
@@ -46,35 +45,22 @@ python bot.py
 
 ## Usage
 
-1. `/start` — Set up language, speech provider (OpenAI or Google), and API key
-2. Send a **voice message** — bot transcribes it and creates a task with a 1-hour reminder
-3. When the reminder fires, choose:
-   - **Doing right now** — marks the task active
-   - **Remind me later** — snooze for 30min, 1hr, or 2hrs
-4. `/tasks` — view active tasks
-5. `/settings` — change language, provider, or API key
-6. `/help` — show commands
-
-## Supported Languages
-
-- English
-- Russian (Русский)
-- Uzbek (O'zbek)
-
-## Speech-to-Text Providers
-
-Each user provides their own API key:
-
-- **OpenAI Whisper** — get a key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-- **Google Cloud STT** — provide a base64-encoded service account JSON
+1. `/start` — choose your language
+2. Send a **voice message** or **text** — creates a task
+3. Pick reminder time (5min, 30min, 1hr, 2hrs)
+4. When reminded, choose:
+   - ✅ **Doing right now** — marks task done
+   - ⏰ **Remind me later** — snooze 30min / 1hr / 2hrs
+5. `/tasks` — view active tasks
+6. `/language` — change language
+7. `/help` — help
 
 ## Project Structure
 
 ```
-bot.py          — Entry point, all Telegram handlers
-db.py           — SQLite database (users + tasks)
-transcribe.py   — OpenAI Whisper + Google STT adapters
-scheduler.py    — Reminder scheduling via JobQueue
-crypto.py       — Fernet encryption for API keys
-i18n.py         — UI strings in 3 languages
+bot.py         — Bot handlers and main loop
+db.py          — SQLite database (users + tasks)
+i18n.py        — Translations (EN, UZ, RU)
+scheduler.py   — Reminder scheduling with persistence
+transcribe.py  — OpenAI Whisper voice transcription
 ```

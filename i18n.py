@@ -1,49 +1,78 @@
 STRINGS = {
     "welcome": {
-        "en": "👋 Welcome! I'll help you manage tasks from voice messages.\n\nPlease select your language:",
-        "ru": "👋 Добро пожаловать! Я помогу вам управлять задачами из голосовых сообщений.\n\nВыберите язык:",
-        "uz": "👋 Xush kelibsiz! Men sizga ovozli xabarlardan vazifalarni boshqarishda yordam beraman.\n\nTilingizni tanlang:",
+        "en": "👋 Welcome to Task Bot!\n\n"
+              "🎤 Send a voice message or text to create a task\n"
+              "⏰ I'll remind you when it's time!\n\n"
+              "/tasks — view tasks\n"
+              "/language — change language\n"
+              "/help — help",
+        "ru": "👋 Добро пожаловать в бот задач!\n\n"
+              "🎤 Отправьте голосовое или текст для создания задачи\n"
+              "⏰ Я напомню, когда придёт время!\n\n"
+              "/tasks — просмотр задач\n"
+              "/language — сменить язык\n"
+              "/help — помощь",
+        "uz": "👋 Vazifa botiga xush kelibsiz!\n\n"
+              "🎤 Vazifa yaratish uchun ovozli xabar yoki matn yuboring\n"
+              "⏰ Vaqti kelganda eslataman!\n\n"
+              "/tasks — vazifalar\n"
+              "/language — tilni o'zgartirish\n"
+              "/help — yordam",
+    },
+    "choose_language": {
+        "en": "🌍 Choose your language:",
+        "ru": "🌍 Выберите язык:",
+        "uz": "🌍 Tilni tanlang:",
     },
     "lang_set": {
-        "en": "Language set to English.",
-        "ru": "Язык установлен: Русский.",
-        "uz": "Til tanlandi: O'zbek.",
-    },
-    "ask_provider": {
-        "en": "Choose your speech-to-text provider:",
-        "ru": "Выберите провайдер распознавания речи:",
-        "uz": "Nutqni matnga aylantirish provayderini tanlang:",
-    },
-    "ask_api_key": {
-        "en": "Please send me your API key as a text message.\nIt will be stored encrypted.\n\n"
-              "For OpenAI: get your key at platform.openai.com/api-keys\n"
-              "For Google: send your service account JSON encoded in base64.",
-        "ru": "Отправьте мне ваш API-ключ текстовым сообщением.\nОн будет храниться в зашифрованном виде.\n\n"
-              "Для OpenAI: получите ключ на platform.openai.com/api-keys\n"
-              "Для Google: отправьте JSON сервисного аккаунта в base64.",
-        "uz": "API kalitingizni matn xabari sifatida yuboring.\nU shifrlangan holda saqlanadi.\n\n"
-              "OpenAI uchun: platform.openai.com/api-keys dan kalit oling\n"
-              "Google uchun: xizmat hisobi JSON ni base64 formatida yuboring.",
-    },
-    "key_saved": {
-        "en": "✅ API key saved! You're all set.\n\nSend me a voice message to create a task.",
-        "ru": "✅ API-ключ сохранён! Всё готово.\n\nОтправьте голосовое сообщение, чтобы создать задачу.",
-        "uz": "✅ API kalit saqlandi! Hammasi tayyor.\n\nVazifa yaratish uchun ovozli xabar yuboring.",
+        "en": "✅ Language set to English!",
+        "ru": "✅ Язык установлен: Русский!",
+        "uz": "✅ Til tanlandi: O'zbekcha!",
     },
     "transcribing": {
-        "en": "🎙 Transcribing your voice message...",
-        "ru": "🎙 Расшифровываю голосовое сообщение...",
-        "uz": "🎙 Ovozli xabaringiz matnga aylantirilmoqda...",
+        "en": "🎙 Transcribing your voice...",
+        "ru": "🎙 Распознаю голосовое...",
+        "uz": "🎙 Ovoz matnga aylantirilmoqda...",
     },
     "task_created": {
-        "en": "📝 Task created!\n\n\"{text}\"\n\n⏰ I'll remind you in {time}.",
-        "ru": "📝 Задача создана!\n\n\"{text}\"\n\n⏰ Напомню через {time}.",
-        "uz": "📝 Vazifa yaratildi!\n\n\"{text}\"\n\n⏰ {time} dan keyin eslataman.",
+        "en": "Task created!",
+        "ru": "Задача создана!",
+        "uz": "Vazifa yaratildi!",
+    },
+    "when_remind": {
+        "en": "When should I remind you?",
+        "ru": "Когда напомнить?",
+        "uz": "Qachon eslatay?",
+    },
+    "in_5m": {
+        "en": "5 min",
+        "ru": "5 мин",
+        "uz": "5 daq",
+    },
+    "in_30m": {
+        "en": "30 min",
+        "ru": "30 мин",
+        "uz": "30 daq",
+    },
+    "in_1h": {
+        "en": "1 hour",
+        "ru": "1 час",
+        "uz": "1 soat",
+    },
+    "in_2h": {
+        "en": "2 hours",
+        "ru": "2 часа",
+        "uz": "2 soat",
+    },
+    "reminder_set": {
+        "en": "Reminder set for",
+        "ru": "Напоминание через",
+        "uz": "Eslatma belgilandi:",
     },
     "reminder": {
-        "en": "Reminder:",
-        "ru": "Напоминание:",
-        "uz": "Eslatma:",
+        "en": "🔔 Reminder!",
+        "ru": "🔔 Напоминание!",
+        "uz": "🔔 Eslatma!",
     },
     "doing_now": {
         "en": "✅ Doing right now",
@@ -51,110 +80,92 @@ STRINGS = {
         "uz": "✅ Hozir qilaman",
     },
     "remind_later": {
-        "en": "🔄 Remind me later",
-        "ru": "🔄 Напомнить позже",
-        "uz": "🔄 Keyinroq eslating",
+        "en": "⏰ Remind me later",
+        "ru": "⏰ Напомнить позже",
+        "uz": "⏰ Keyinroq eslating",
     },
     "after_30m": {
-        "en": "⏰ After 30 minutes",
-        "ru": "⏰ Через 30 минут",
-        "uz": "⏰ 30 daqiqadan keyin",
+        "en": "After 30 minutes",
+        "ru": "Через 30 минут",
+        "uz": "30 daqiqadan keyin",
     },
     "after_1h": {
-        "en": "⏰ After 1 hour",
-        "ru": "⏰ Через 1 час",
-        "uz": "⏰ 1 soatdan keyin",
+        "en": "After 1 hour",
+        "ru": "Через 1 час",
+        "uz": "1 soatdan keyin",
     },
     "after_2h": {
-        "en": "⏰ After 2 hours",
-        "ru": "⏰ Через 2 часа",
-        "uz": "⏰ 2 soatdan keyin",
+        "en": "After 2 hours",
+        "ru": "Через 2 часа",
+        "uz": "2 soatdan keyin",
     },
-    "doing_now_confirmed": {
-        "en": "Great! Good luck with your task:",
-        "ru": "Отлично! Удачи с задачей:",
-        "uz": "Ajoyib! Vazifangizga omad:",
+    "doing_confirmed": {
+        "en": "💪 Great! Good luck with your task!",
+        "ru": "💪 Отлично! Удачи с задачей!",
+        "uz": "💪 Ajoyib! Vazifangizga omad!",
     },
-    "snoozed": {
-        "en": "Got it! I'll remind you again in {minutes} minutes:",
-        "ru": "Понял! Напомню снова через {minutes} минут:",
-        "uz": "Tushundim! {minutes} daqiqadan keyin yana eslataman:",
+    "minutes": {
+        "en": "min",
+        "ru": "мин",
+        "uz": "daq",
     },
-    "1_hour": {
-        "en": "1 hour",
-        "ru": "1 час",
-        "uz": "1 soat",
-    },
-    "error_no_key": {
-        "en": "⚠️ You haven't set up your API key yet. Use /start to set it up.",
-        "ru": "⚠️ Вы ещё не настроили API-ключ. Используйте /start для настройки.",
-        "uz": "⚠️ Siz hali API kalitni sozlamagansiz. Sozlash uchun /start buyrug'ini ishlating.",
-    },
-    "error_transcription": {
-        "en": "❌ Failed to transcribe the voice message. Please check your API key or try again.",
-        "ru": "❌ Не удалось расшифровать голосовое сообщение. Проверьте API-ключ или попробуйте снова.",
-        "uz": "❌ Ovozli xabarni matnga aylantirib bo'lmadi. API kalitni tekshiring yoki qayta urinib ko'ring.",
-    },
-    "help": {
-        "en": "🤖 *Task Bot Help*\n\n"
-              "Send me a voice message and I'll turn it into a task with a reminder.\n\n"
-              "*Commands:*\n"
-              "/start - Set up the bot\n"
-              "/tasks - View your active tasks\n"
-              "/settings - Change language, provider, or API key\n"
-              "/help - Show this message",
-        "ru": "🤖 *Помощь по боту задач*\n\n"
-              "Отправьте голосовое сообщение, и я превращу его в задачу с напоминанием.\n\n"
-              "*Команды:*\n"
-              "/start - Настроить бота\n"
-              "/tasks - Посмотреть активные задачи\n"
-              "/settings - Изменить язык, провайдер или API-ключ\n"
-              "/help - Показать это сообщение",
-        "uz": "🤖 *Vazifa boti yordami*\n\n"
-              "Ovozli xabar yuboring va men uni eslatma bilan vazifaga aylantiraman.\n\n"
-              "*Buyruqlar:*\n"
-              "/start - Botni sozlash\n"
-              "/tasks - Faol vazifalarni ko'rish\n"
-              "/settings - Til, provayder yoki API kalitni o'zgartirish\n"
-              "/help - Ushbu xabarni ko'rsatish",
+    "hours": {
+        "en": "hour(s)",
+        "ru": "час(ов)",
+        "uz": "soat",
     },
     "no_tasks": {
-        "en": "You have no active tasks. Send a voice message to create one!",
-        "ru": "У вас нет активных задач. Отправьте голосовое сообщение, чтобы создать!",
-        "uz": "Faol vazifalaringiz yo'q. Vazifa yaratish uchun ovozli xabar yuboring!",
+        "en": "🎉 No active tasks! Send a voice or text to create one.",
+        "ru": "🎉 Нет активных задач! Отправьте голосовое или текст.",
+        "uz": "🎉 Faol vazifalar yo'q! Ovozli xabar yoki matn yuboring.",
     },
     "tasks_header": {
-        "en": "📋 *Your tasks:*\n\n",
-        "ru": "📋 *Ваши задачи:*\n\n",
-        "uz": "📋 *Vazifalaringiz:*\n\n",
+        "en": "Your tasks:",
+        "ru": "Ваши задачи:",
+        "uz": "Vazifalaringiz:",
     },
-    "settings_prompt": {
-        "en": "What would you like to change?",
-        "ru": "Что вы хотите изменить?",
-        "uz": "Nimani o'zgartirmoqchisiz?",
+    "error_no_key": {
+        "en": "⚠️ Voice transcription not configured. Add OPENAI_API_KEY to .env file.",
+        "ru": "⚠️ Распознавание голоса не настроено. Добавьте OPENAI_API_KEY в .env.",
+        "uz": "⚠️ Ovoz tanish sozlanmagan. .env fayliga OPENAI_API_KEY qo'shing.",
     },
-    "change_language": {
-        "en": "🌐 Language",
-        "ru": "🌐 Язык",
-        "uz": "🌐 Til",
+    "error_transcription": {
+        "en": "❌ Couldn't transcribe the voice. Please try again.",
+        "ru": "❌ Не удалось распознать голос. Попробуйте ещё раз.",
+        "uz": "❌ Ovozni aniqlab bo'lmadi. Qayta urinib ko'ring.",
     },
-    "change_provider": {
-        "en": "🔧 STT Provider",
-        "ru": "🔧 Провайдер STT",
-        "uz": "🔧 STT provayder",
-    },
-    "change_api_key": {
-        "en": "🔑 API Key",
-        "ru": "🔑 API-ключ",
-        "uz": "🔑 API kalit",
-    },
-    "cancelled": {
-        "en": "Cancelled.",
-        "ru": "Отменено.",
-        "uz": "Bekor qilindi.",
+    "help": {
+        "en": "🤖 Task Bot Help\n\n"
+              "🎤 Send a voice message — I'll transcribe and create a task\n"
+              "📝 Or just type your task as text\n"
+              "⏰ Pick when to be reminded\n"
+              "✅ Mark done or snooze when reminded\n\n"
+              "Commands:\n"
+              "/tasks — view active tasks\n"
+              "/language — change language\n"
+              "/help — this message",
+        "ru": "🤖 Помощь по боту\n\n"
+              "🎤 Отправьте голосовое — распознаю и создам задачу\n"
+              "📝 Или просто напишите текстом\n"
+              "⏰ Выберите время напоминания\n"
+              "✅ Отметьте или отложите при напоминании\n\n"
+              "Команды:\n"
+              "/tasks — активные задачи\n"
+              "/language — сменить язык\n"
+              "/help — эта справка",
+        "uz": "🤖 Bot yordami\n\n"
+              "🎤 Ovozli xabar yuboring — matnga aylantirib vazifa yarataman\n"
+              "📝 Yoki shunchaki matn yozing\n"
+              "⏰ Eslatma vaqtini tanlang\n"
+              "✅ Eslatganimda bajarildi deb belgilang yoki keyinga qoldiring\n\n"
+              "Buyruqlar:\n"
+              "/tasks — faol vazifalar\n"
+              "/language — tilni o'zgartirish\n"
+              "/help — ushbu yordam",
     },
 }
 
 
 def t(key: str, lang: str = "en") -> str:
+    """Get translated string by key and language code."""
     return STRINGS.get(key, {}).get(lang, STRINGS.get(key, {}).get("en", key))
