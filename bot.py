@@ -27,7 +27,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 # ── Commands ──────────────────────────────────────────────────
@@ -56,6 +55,16 @@ async def cmd_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user = await db.get_user(update.effective_user.id)
     lang = user["language"] if user else "en"
     await update.message.reply_text(t("choose_language", lang), reply_markup=keyboard)
+
+
+async def cmd_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Change API key with /settings."""
+    user_id = update.effective_user.id
+    user = await db.get_user(user_id)
+    lang = user["language"] if user else "en"
+
+    context.user_data["awaiting_api_key"] = True
+    await update.message.reply_text(t("settings_prompt", lang))
 
 
 async def cmd_tasks(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -97,9 +106,12 @@ async def on_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Ensure user exists in DB
     if not user:
         await db.upsert_user(user_id, language="en")
+        user = await db.get_user(user_id)
 
-    if not OPENAI_API_KEY:
-        await update.message.reply_text(t("error_no_key", lang))
+    # Check for API key
+    api_key = user.get("api_key")
+    if not api_key:
+        await update.message.reply_text(t("no_api_key", lang))
         return
 
     status_msg = await update.message.reply_text(t("transcribing", lang))
@@ -110,7 +122,7 @@ async def on_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await tg_file.download_to_drive(file_path)
 
     try:
-        text = await transcribe(file_path, OPENAI_API_KEY)
+        text = await transcribe(file_path, api_key)
     except Exception as e:
         logger.error(f"Transcription failed: {e}")
         await status_msg.edit_text(t("error_transcription", lang))
@@ -138,7 +150,7 @@ async def on_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def on_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Create a task from a text message."""
+    """Handle text messages — either save API key or create a task."""
     user_id = update.effective_user.id
     user = await db.get_user(user_id)
     lang = user["language"] if user else "en"
@@ -147,10 +159,37 @@ async def on_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not text:
         return
 
-    # Ensure user exists in DB
+    # ── API key input mode ──
+    if context.user_data.get("awaiting_api_key"):
+        # Validate: OpenAI keys start with "sk-"
+        if not text.startswith("sk-"):
+            await update.message.reply_text(t("key_invalid", lang))
+            return
+
+        # Save API key
+        await db.upsert_user(user_id, api_key=text)
+
+        # Delete the message containing the key for security
+        try:
+            await update.message.delete()
+        except Exception:
+            pass
+
+        context.user_data["awaiting_api_key"] = False
+
+        # Check if this is initial setup or settings update
+        is_new_user = not user or not user.get("api_key")
+        if is_new_user:
+            await update.message.reply_text(t("key_saved", lang))
+        else:
+            await update.message.reply_text(t("key_updated", lang))
+        return
+
+    # ── Ensure user exists ──
     if not user:
         await db.upsert_user(user_id, language="en")
 
+    # ── Create task from text ──
     task_id = await db.create_task(user_id, text)
 
     keyboard = _remind_time_keyboard(task_id, lang)
@@ -176,9 +215,20 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     if data.startswith("lang:"):
         lang = data.split(":")[1]
         await db.upsert_user(user_id, language=lang)
-        await query.edit_message_text(
-            f"{t('lang_set', lang)}\n\n{t('welcome', lang)}"
-        )
+
+        # Check if user has API key set
+        user = await db.get_user(user_id)
+        if not user.get("api_key"):
+            # First time setup — ask for API key
+            context.user_data["awaiting_api_key"] = True
+            await query.edit_message_text(
+                f"{t('lang_set', lang)}\n\n{t('ask_api_key', lang)}"
+            )
+        else:
+            # Returning user — just confirm language change
+            await query.edit_message_text(
+                f"{t('lang_set', lang)}\n\n{t('welcome', lang)}"
+            )
         return
 
     # ── Set reminder time ──
@@ -281,6 +331,7 @@ def main():
 
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("language", cmd_language))
+    app.add_handler(CommandHandler("settings", cmd_settings))
     app.add_handler(CommandHandler("tasks", cmd_tasks))
     app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(MessageHandler(filters.VOICE, on_voice))

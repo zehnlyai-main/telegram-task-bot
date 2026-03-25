@@ -7,6 +7,7 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
     user_id    INTEGER PRIMARY KEY,
     language   TEXT DEFAULT 'en',
+    api_key    TEXT,
     created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -27,6 +28,12 @@ async def init_db() -> None:
     os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
     async with aiosqlite.connect(DB_PATH) as conn:
         await conn.executescript(SCHEMA)
+        # Add api_key column if upgrading from older schema
+        try:
+            await conn.execute("ALTER TABLE users ADD COLUMN api_key TEXT")
+            await conn.commit()
+        except Exception:
+            pass  # Column already exists
         await conn.commit()
 
 

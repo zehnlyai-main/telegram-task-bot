@@ -5,18 +5,21 @@ STRINGS = {
               "⏰ I'll remind you when it's time!\n\n"
               "/tasks — view tasks\n"
               "/language — change language\n"
+              "/settings — change API key\n"
               "/help — help",
         "ru": "👋 Добро пожаловать в бот задач!\n\n"
               "🎤 Отправьте голосовое или текст для создания задачи\n"
               "⏰ Я напомню, когда придёт время!\n\n"
               "/tasks — просмотр задач\n"
               "/language — сменить язык\n"
+              "/settings — изменить API ключ\n"
               "/help — помощь",
         "uz": "👋 Vazifa botiga xush kelibsiz!\n\n"
               "🎤 Vazifa yaratish uchun ovozli xabar yoki matn yuboring\n"
               "⏰ Vaqti kelganda eslataman!\n\n"
               "/tasks — vazifalar\n"
               "/language — tilni o'zgartirish\n"
+              "/settings — API kalitni o'zgartirish\n"
               "/help — yordam",
     },
     "choose_language": {
@@ -28,6 +31,45 @@ STRINGS = {
         "en": "✅ Language set to English!",
         "ru": "✅ Язык установлен: Русский!",
         "uz": "✅ Til tanlandi: O'zbekcha!",
+    },
+    "ask_api_key": {
+        "en": "🔑 Now send me your OpenAI API key.\n\n"
+              "Get one at: platform.openai.com/api-keys\n\n"
+              "I'll delete your message right after saving it for security.",
+        "ru": "🔑 Теперь отправьте ваш OpenAI API ключ.\n\n"
+              "Получите на: platform.openai.com/api-keys\n\n"
+              "Я удалю ваше сообщение сразу после сохранения для безопасности.",
+        "uz": "🔑 Endi OpenAI API kalitingizni yuboring.\n\n"
+              "Bu yerdan oling: platform.openai.com/api-keys\n\n"
+              "Xavfsizlik uchun xabaringizni saqlagandan keyin o'chirib tashlayman.",
+    },
+    "key_saved": {
+        "en": "✅ API key saved! You're all set.\n\n"
+              "Send me a voice message or text to create your first task!",
+        "ru": "✅ API ключ сохранён! Всё готово.\n\n"
+              "Отправьте голосовое или текст, чтобы создать первую задачу!",
+        "uz": "✅ API kalit saqlandi! Hammasi tayyor.\n\n"
+              "Birinchi vazifangizni yaratish uchun ovozli xabar yoki matn yuboring!",
+    },
+    "key_invalid": {
+        "en": "❌ That doesn't look like an OpenAI API key. It should start with 'sk-'.\nPlease try again:",
+        "ru": "❌ Это не похоже на OpenAI API ключ. Он должен начинаться с 'sk-'.\nПопробуйте ещё раз:",
+        "uz": "❌ Bu OpenAI API kalitiga o'xshamaydi. U 'sk-' bilan boshlanishi kerak.\nQayta urinib ko'ring:",
+    },
+    "key_updated": {
+        "en": "✅ API key updated!",
+        "ru": "✅ API ключ обновлён!",
+        "uz": "✅ API kalit yangilandi!",
+    },
+    "settings_prompt": {
+        "en": "🔑 Send me your new OpenAI API key.\n\nI'll delete your message right after saving.",
+        "ru": "🔑 Отправьте новый OpenAI API ключ.\n\nЯ удалю ваше сообщение сразу после сохранения.",
+        "uz": "🔑 Yangi OpenAI API kalitingizni yuboring.\n\nSaqlagandan keyin xabaringizni o'chiraman.",
+    },
+    "no_api_key": {
+        "en": "⚠️ You haven't set up your API key yet.\nUse /start to set it up.",
+        "ru": "⚠️ Вы ещё не настроили API ключ.\nИспользуйте /start для настройки.",
+        "uz": "⚠️ Siz hali API kalitni sozlamagansiz.\nSozlash uchun /start buyrug'ini ishlating.",
     },
     "transcribing": {
         "en": "🎙 Transcribing your voice...",
@@ -124,11 +166,6 @@ STRINGS = {
         "ru": "Ваши задачи:",
         "uz": "Vazifalaringiz:",
     },
-    "error_no_key": {
-        "en": "⚠️ Voice transcription not configured. Add OPENAI_API_KEY to .env file.",
-        "ru": "⚠️ Распознавание голоса не настроено. Добавьте OPENAI_API_KEY в .env.",
-        "uz": "⚠️ Ovoz tanish sozlanmagan. .env fayliga OPENAI_API_KEY qo'shing.",
-    },
     "error_transcription": {
         "en": "❌ Couldn't transcribe the voice. Please try again.",
         "ru": "❌ Не удалось распознать голос. Попробуйте ещё раз.",
@@ -143,6 +180,7 @@ STRINGS = {
               "Commands:\n"
               "/tasks — view active tasks\n"
               "/language — change language\n"
+              "/settings — change API key\n"
               "/help — this message",
         "ru": "🤖 Помощь по боту\n\n"
               "🎤 Отправьте голосовое — распознаю и создам задачу\n"
@@ -152,6 +190,7 @@ STRINGS = {
               "Команды:\n"
               "/tasks — активные задачи\n"
               "/language — сменить язык\n"
+              "/settings — изменить API ключ\n"
               "/help — эта справка",
         "uz": "🤖 Bot yordami\n\n"
               "🎤 Ovozli xabar yuboring — matnga aylantirib vazifa yarataman\n"
@@ -161,6 +200,7 @@ STRINGS = {
               "Buyruqlar:\n"
               "/tasks — faol vazifalar\n"
               "/language — tilni o'zgartirish\n"
+              "/settings — API kalitni o'zgartirish\n"
               "/help — ushbu yordam",
     },
 }
