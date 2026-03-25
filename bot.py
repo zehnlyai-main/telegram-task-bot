@@ -16,7 +16,7 @@ from telegram.ext import (
 import db
 from i18n import t
 from transcribe import transcribe
-from scheduler import schedule_reminder, restore_reminders
+from scheduler import schedule_reminder, schedule_followup, restore_reminders
 
 load_dotenv()
 
@@ -254,8 +254,27 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         )
         return
 
-    # ── Doing right now ──
+    # ── Doing right now → schedule follow-up in 15 min ──
     if data.startswith("done:"):
+        task_id = int(data.split(":")[1])
+        user = await db.get_user(user_id)
+        lang = user["language"] if user else "en"
+        task = await db.get_task(task_id)
+        if not task:
+            return
+
+        await db.update_task(task_id, status="in_progress")
+        schedule_followup(
+            context.job_queue, task_id, update.effective_chat.id,
+            task["text"], lang,
+        )
+        await query.edit_message_text(
+            f"{t('doing_confirmed', lang)}\n\n📋 {task['text']}"
+        )
+        return
+
+    # ── Complete task (from follow-up) ──
+    if data.startswith("complete:"):
         task_id = int(data.split(":")[1])
         user = await db.get_user(user_id)
         lang = user["language"] if user else "en"
@@ -265,7 +284,7 @@ async def on_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
         await db.update_task(task_id, status="done")
         await query.edit_message_text(
-            f"✅ {t('doing_confirmed', lang)}\n\n📋 {task['text']}"
+            f"{t('task_completed', lang)}\n\n📋 {task['text']}"
         )
         return
 

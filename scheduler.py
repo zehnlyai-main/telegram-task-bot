@@ -54,6 +54,49 @@ async def _reminder_callback(context: CallbackContext) -> None:
     )
 
 
+def schedule_followup(job_queue: JobQueue, task_id: int, chat_id: int,
+                      task_text: str, lang: str, delay_minutes: int = 15) -> None:
+    """Schedule a follow-up check after user says they're doing a task."""
+    job_name = f"followup_{task_id}"
+
+    # Remove existing followup for this task if any
+    existing = job_queue.get_jobs_by_name(job_name)
+    for job in existing:
+        job.schedule_removal()
+
+    job_queue.run_once(
+        callback=_followup_callback,
+        when=delay_minutes * 60,
+        chat_id=chat_id,
+        name=job_name,
+        data={"task_id": task_id, "text": task_text, "lang": lang},
+    )
+
+
+async def _followup_callback(context: CallbackContext) -> None:
+    """Ask user if they completed the task."""
+    data = context.job.data
+    task_id = data["task_id"]
+    text = data["text"]
+    lang = data["lang"]
+
+    # Verify task is still active (not already completed)
+    task = await db.get_task(task_id)
+    if not task or task["status"] == "done":
+        return
+
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton(t("complete_task", lang), callback_data=f"complete:{task_id}")],
+        [InlineKeyboardButton(t("remind_later", lang), callback_data=f"later:{task_id}")],
+    ])
+
+    await context.bot.send_message(
+        chat_id=context.job.chat_id,
+        text=f"{t('followup_check', lang)}\n\n📋 {text}",
+        reply_markup=keyboard,
+    )
+
+
 async def restore_reminders(app) -> None:
     """Restore all pending reminders from database on bot startup."""
     tasks = await db.get_pending_tasks()

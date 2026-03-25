@@ -142,9 +142,24 @@ STRINGS = {
         "uz": "2 soatdan keyin",
     },
     "doing_confirmed": {
-        "en": "💪 Great! Good luck with your task!",
-        "ru": "💪 Отлично! Удачи с задачей!",
-        "uz": "💪 Ajoyib! Vazifangizga omad!",
+        "en": "💪 Great! Go for it! I'll check back in 15 minutes.",
+        "ru": "💪 Отлично! Действуйте! Проверю через 15 минут.",
+        "uz": "💪 Ajoyib! Boshlang! 15 daqiqadan keyin tekshiraman.",
+    },
+    "followup_check": {
+        "en": "🔔 Have you completed this task?",
+        "ru": "🔔 Вы выполнили эту задачу?",
+        "uz": "🔔 Bu vazifani bajardingizmi?",
+    },
+    "complete_task": {
+        "en": "✅ Complete task",
+        "ru": "✅ Завершить задачу",
+        "uz": "✅ Vazifani yakunlash",
+    },
+    "task_completed": {
+        "en": "🎉 Task completed! Well done!",
+        "ru": "🎉 Задача выполнена! Молодец!",
+        "uz": "🎉 Vazifa bajarildi! Zo'r!",
     },
     "minutes": {
         "en": "min",
