@@ -1,10 +1,13 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta, time
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext, JobQueue
 
 from i18n import t
 import db
+
+# Tashkent timezone (UTC+5)
+TZ_OFFSET = timezone(timedelta(hours=5))
 
 
 def schedule_reminder(job_queue: JobQueue, task_id: int, chat_id: int,
@@ -95,6 +98,56 @@ async def _followup_callback(context: CallbackContext) -> None:
         text=f"{t('followup_check', lang)}\n\n📋 {text}",
         reply_markup=keyboard,
     )
+
+
+def schedule_daily_report(job_queue: JobQueue) -> None:
+    """Schedule a daily report at 9:00 AM Tashkent time (UTC+5)."""
+    report_time = time(hour=4, minute=0, second=0)  # 9:00 AM UTC+5 = 4:00 AM UTC
+    job_queue.run_daily(
+        callback=_daily_report_callback,
+        time=report_time,
+        name="daily_report",
+    )
+
+
+async def _daily_report_callback(context: CallbackContext) -> None:
+    """Send daily morning report to all users."""
+    users = await db.get_all_users()
+
+    for user in users:
+        user_id = user["user_id"]
+        lang = user.get("language", "en")
+
+        active = await db.get_user_tasks(user_id)
+        backlog = await db.get_backlog_tasks(user_id)
+
+        if not active and not backlog:
+            try:
+                await context.bot.send_message(
+                    chat_id=user_id,
+                    text=t("report_empty", lang),
+                )
+            except Exception:
+                pass
+            continue
+
+        lines = f"{t('daily_report', lang)}\n"
+
+        if active:
+            lines += f"\n{t('report_active', lang)} ({len(active)}):\n"
+            for i, task in enumerate(active, 1):
+                status_icon = {"pending": "⏳", "in_progress": "🔄"}.get(task["status"], "📝")
+                lines += f"  {i}. {status_icon} {task['text']}\n"
+
+        if backlog:
+            lines += f"\n{t('report_backlog', lang)} ({len(backlog)}):\n"
+            for i, task in enumerate(backlog, 1):
+                lines += f"  {i}. 📦 {task['text']}\n"
+
+        try:
+            await context.bot.send_message(chat_id=user_id, text=lines)
+        except Exception:
+            pass  # User may have blocked the bot
 
 
 async def restore_reminders(app) -> None:

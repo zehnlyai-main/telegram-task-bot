@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     remind_at    TEXT,
     snooze_count INTEGER DEFAULT 0,
     created_at   TEXT DEFAULT (datetime('now')),
+    completed_at TEXT,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 """
@@ -28,12 +29,16 @@ async def init_db() -> None:
     os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
     async with aiosqlite.connect(DB_PATH) as conn:
         await conn.executescript(SCHEMA)
-        # Add api_key column if upgrading from older schema
+        # Add columns if upgrading from older schema
+        for col, typ in [("api_key", "TEXT"), ("completed_at", "TEXT")]:
+            try:
+                await conn.execute(f"ALTER TABLE users ADD COLUMN {col} {typ}")
+            except Exception:
+                pass
         try:
-            await conn.execute("ALTER TABLE users ADD COLUMN api_key TEXT")
-            await conn.commit()
+            await conn.execute("ALTER TABLE tasks ADD COLUMN completed_at TEXT")
         except Exception:
-            pass  # Column already exists
+            pass
         await conn.commit()
 
 
@@ -63,11 +68,11 @@ async def upsert_user(user_id: int, **fields) -> None:
         await conn.commit()
 
 
-async def create_task(user_id: int, text: str) -> int:
+async def create_task(user_id: int, text: str, status: str = "active") -> int:
     async with aiosqlite.connect(DB_PATH) as conn:
         cursor = await conn.execute(
-            "INSERT INTO tasks (user_id, text) VALUES (?, ?)",
-            (user_id, text),
+            "INSERT INTO tasks (user_id, text, status) VALUES (?, ?, ?)",
+            (user_id, text, status),
         )
         await conn.commit()
         return cursor.lastrowid
@@ -89,12 +94,44 @@ async def update_task(task_id: int, **fields) -> None:
         await conn.commit()
 
 
+async def delete_task(task_id: int) -> None:
+    async with aiosqlite.connect(DB_PATH) as conn:
+        await conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+        await conn.commit()
+
+
 async def get_user_tasks(user_id: int) -> list[dict]:
+    """Get all non-done, non-backlog tasks."""
     async with aiosqlite.connect(DB_PATH) as conn:
         conn.row_factory = aiosqlite.Row
         cursor = await conn.execute(
-            "SELECT * FROM tasks WHERE user_id = ? AND status != 'done' ORDER BY created_at DESC",
+            "SELECT * FROM tasks WHERE user_id = ? AND status NOT IN ('done', 'backlog') "
+            "ORDER BY created_at DESC",
             (user_id,),
+        )
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
+
+
+async def get_backlog_tasks(user_id: int) -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as conn:
+        conn.row_factory = aiosqlite.Row
+        cursor = await conn.execute(
+            "SELECT * FROM tasks WHERE user_id = ? AND status = 'backlog' "
+            "ORDER BY created_at DESC",
+            (user_id,),
+        )
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
+
+
+async def get_done_tasks(user_id: int, limit: int = 10) -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as conn:
+        conn.row_factory = aiosqlite.Row
+        cursor = await conn.execute(
+            "SELECT * FROM tasks WHERE user_id = ? AND status = 'done' "
+            "ORDER BY completed_at DESC LIMIT ?",
+            (user_id, limit),
         )
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
@@ -106,5 +143,13 @@ async def get_pending_tasks() -> list[dict]:
         cursor = await conn.execute(
             "SELECT * FROM tasks WHERE status = 'pending' AND remind_at IS NOT NULL"
         )
+        rows = await cursor.fetchall()
+        return [dict(r) for r in rows]
+
+
+async def get_all_users() -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as conn:
+        conn.row_factory = aiosqlite.Row
+        cursor = await conn.execute("SELECT * FROM users")
         rows = await cursor.fetchall()
         return [dict(r) for r in rows]
